@@ -1,0 +1,58 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image OCR</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Image OCR Application</h1>
+        <button id="nightModeToggle" class="night-mode-btn">
+            <i class="fas fa-sun" id="nightModeIcon"></i>
+        </button>
+    </header>
+    <div class="container">
+        <input type="file" id="fileUpload" accept="image/*" multiple>
+        <button id="uploadButton">Upload Images</button>
+        <button id="showHideButton">Show Uploaded Images</button>
+        <button id="removeOneButton">Remove One</button>
+        <button id="removeAllButton">Remove All</button>
+        <button id="findButton">Find text</button>
+
+        <div id="output">
+            <div id="uploadedImages"></div>
+            <textarea id="extractedText" rows="10" cols="50"></textarea>
+        </div>
+    </div>
+
+    <footer>
+        <p>About Us</p>
+        <p>Faraz Meraj Quazi a developer and AI & ML enthusiast dedicated to creating innovative solutions for image processing and OCR applications. My goal is to provide accurate and efficient solutions for extracting text from images. If you have any questions.</p>
+        <p>Connect with me:</p>
+        <div class="contact-icon instagram">
+            <a href="https://instagram.com/farazquazi2021" target="_blank" style="text-decoration: none; color: #E1306C;">
+                <i class="fab fa-instagram"></i> @farazquazi2021
+            </a>
+        </div><br>
+        <div class="contact-icon email">
+            <a href="mailto:quazifaraz508@gmail.com" style="text-decoration: none; color: #007eff;">
+                <i class="fas fa-envelope"></i> quazifaraz508@gmail.com
+            </a>
+        </div><br>
+        <div class="contact-icon phone " style="text-decoration: none; color: #008d26;">
+            <i class="fas fa-phone"></i> (+91) 7558342940
+        </div>
+        
+    </footer>
+    
+    <script>
+        var csrftoken = "{{ csrf_token }}";
+    </script>
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>
