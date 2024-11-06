@@ -24,7 +24,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 
-@require_http_methods(['POST'])
+@require_https_methods(['POST'])
 def OCR_build(request):
     try:
         data = json.loads(request.body)
