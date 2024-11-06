@@ -23,22 +23,24 @@ from io import BytesIO
 
 @require_http_methods(['POST'])
 def OCR_build(request):
-    data = json.loads(request.body)
-    image_urls = data.get('image_urls', [])
-    result = ''
-    for url in image_urls:
-        if url.startswith('data:image/jpeg;base64,'):
-            # Decode the base64 encoded image data
-            image_data = base64.b64decode(url.split(',')[1])
-            # Save the image data to a file
-            with open('image.jpg', 'wb') as f:
-                f.write(image_data)
-            # Use the file path as the URL for the requests.get() function
-            img = Image.open('image.jpg')
+    try:
+        data = json.loads(request.body)
+        image_urls = data.get('image_urls', [])
+        result = ''
+        
+        for url in image_urls:
+            if url.startswith('data:image/jpeg;base64,'):
+                # Decode the base64 encoded image data
+                image_data = base64.b64decode(url.split(',')[1])
+                img = Image.open(BytesIO(image_data))
+            else:
+                response = requests.get(url)
+                response.raise_for_status()  # Check if the request was successful
+                img = Image.open(BytesIO(response.content))
+
             result += pytesseract.image_to_string(img)
-        else:
-            response = requests.get(url)
-            img = Image.open(BytesIO(response.content))
-            result += pytesseract.image_to_string(img)
-    return JsonResponse({'text': result})
+        
+        return JsonResponse({'text': result})
     
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
