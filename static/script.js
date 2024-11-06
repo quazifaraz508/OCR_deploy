@@ -92,3 +92,28 @@ findButton.addEventListener("click", async () => {
   const result = await response.json();
   extractedText.value = result.text;
 });
+
+findButton.addEventListener("click", async () => {
+  extractedText.value = ""; // Clear previous results
+
+  // Send all images to the server at once
+  const response = await fetch('/build/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrftoken,
+    },
+    body: JSON.stringify({ image_urls: uploadedImageUrls }),
+  });
+
+  const result = await response.json();
+  if (result.text) {
+    // Display each OCR result in the textarea
+    result.text.forEach((text, index) => {
+      extractedText.value += `Image ${index + 1}:\n${text}\n\n`;
+    });
+  } else {
+    console.error("OCR processing error:", result.error);
+  }
+});
+
