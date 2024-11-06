@@ -5,6 +5,9 @@ import json
 from django.views.decorators.http import require_http_methods
 import pytesseract
 
+pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+
+
 def homePage(request):
     return render(request, "main.html")
 
