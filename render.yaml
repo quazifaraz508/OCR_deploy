@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: docusight
+    env: python
+    plan: free  # Specify your plan; you can choose another plan if needed
+    buildCommand: "./render-build.sh"
+    startCommand: "gunicorn ocr_model.wsgi --bind 0.0.0.0:8000"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: "ocr_model.settings"
+      - key: SECRET_KEY
+        value: "django-insecure-nh2oz@cpd-s$ljaf*9(*l56t+0%0hmut!m@nj=b2!t&^5hia1h"
+      - key: TESSERACT_PATH
+        value: "/usr/bin/tesseract"
+    # If using static files, you can add a 'static' route
+    staticPublishPath: "staticfiles"
