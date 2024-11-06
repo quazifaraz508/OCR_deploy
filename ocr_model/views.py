@@ -10,7 +10,7 @@ import json
 
 # Set Tesseract command path if not in PATH
 
-# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 
 def homePage(request):
     return render(request, "main.html")
