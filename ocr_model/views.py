@@ -9,8 +9,25 @@ import requests
 import json
 
 # Set Tesseract command path if not in PATH
-pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+import subprocess
+import sys
 
+try:
+    # Check if Tesseract is installed by checking the version
+    subprocess.run(['tesseract', '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+except (subprocess.CalledProcessError, FileNotFoundError):
+    print("Tesseract is not installed. Installing now...")
+    
+    # For Linux (Debian-based)
+    try:
+        subprocess.run(['sudo', 'apt-get', 'update'], check=True)
+        subprocess.run(['sudo', 'apt-get', 'install', 'tesseract-ocr', '-y'], check=True)
+        print("Tesseract installed successfully.")
+        pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+    except subprocess.CalledProcessError as install_error:
+        print(f"Error installing Tesseract: {install_error}")
+        sys.exit(1)
 # Home page view
 def homePage(request):
     return render(request, "main.html")
