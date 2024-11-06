@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-nh2oz@cpd-s$ljaf*9(*l56t+0%0hmut!m@nj=b2!t&^5hia1h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['docusight.onrender.com']
+ALLOWED_HOSTS = ['docusight.onrender.com', 'docusight.vercel.com' ]
 
 
 # Application definition
