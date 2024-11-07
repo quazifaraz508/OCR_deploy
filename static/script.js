@@ -10,6 +10,9 @@ const nightModeToggle = document.getElementById("nightModeToggle");
 const nightModeIcon = document.getElementById("nightModeIcon");
 const findButton = document.getElementById("findButton");
 
+// Getting CSRF token from the hidden input
+const csrftoken = document.getElementById('csrf_token').value;
+
 let uploadedImageUrls = [];
 let isNightMode = false;
 
