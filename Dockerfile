@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y tesseract-ocr
 COPY . /ocr_model
 
 # Set environment variables (optional, example for Django)
-ENV DJANGO_SETTINGS_MODULE=ocr_model.settings  # Replace with your project settings module
+ENV DJANGO_SETTINGS_MODULE=ocr_model.settings 
 ENV PYTHONUNBUFFERED=1
 
 # Run the Django server with Gunicorn
