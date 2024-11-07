@@ -16,6 +16,10 @@ let isNightMode = false;
 // Upload button handler
 uploadButton.addEventListener("click", async () => {
     const files = fileInput.files;
+    if (files.length === 0) {
+        alert("Please select at least one image.");
+        return;
+    }
     for (let file of files) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -71,6 +75,11 @@ nightModeToggle.addEventListener("click", () => {
 findButton.addEventListener("click", async () => {
     extractedText.value = ""; // Clear previous results
 
+    if (uploadedImageUrls.length === 0) {
+        alert("No images uploaded!");
+        return; // Prevent fetch if no images
+    }
+
     try {
         const response = await fetch('/build/', {
             method: 'POST',
@@ -89,8 +98,10 @@ findButton.addEventListener("click", async () => {
             });
         } else if (result.error) {
             console.error("OCR processing error:", result.error);
+            alert("An error occurred while processing the images.");
         }
     } catch (error) {
         console.error("Error in fetch:", error);
+        alert("An error occurred while fetching OCR results.");
     }
 });
