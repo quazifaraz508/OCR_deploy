@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.shortcuts import render
 import pytesseract
 from PIL import Image
 from io import BytesIO
