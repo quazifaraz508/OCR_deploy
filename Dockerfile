@@ -14,7 +14,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application files into the container
-COPY /ocr_model
+COPY . /ocr_model
 
 # Expose the port your app will run on (adjust if your app uses a different port)
 EXPOSE 8000
