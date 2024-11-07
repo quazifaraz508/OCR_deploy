@@ -1,3 +1,4 @@
+// script.js
 const fileInput = document.getElementById("fileUpload");
 const uploadButton = document.getElementById("uploadButton");
 const showHideButton = document.getElementById("showHideButton");
@@ -6,25 +7,12 @@ const removeAllButton = document.getElementById("removeAllButton");
 const output = document.getElementById("output");
 const uploadedImages = document.getElementById("uploadedImages");
 const extractedText = document.getElementById("extractedText");
-const nightModeToggle = document.getElementById("nightModeToggle");
-const nightModeIcon = document.getElementById("nightModeIcon");
-const findButton = document.getElementById("findButton");
-
-// Getting CSRF token from the hidden input
-const csrftoken = document.getElementById('csrf_token').value;
-// const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-
 
 let uploadedImageUrls = [];
-let isNightMode = false;
 
-// Upload button handler
 uploadButton.addEventListener("click", async () => {
-    const files = fileInput.files;
-    if (files.length === 0) {
-        alert("Please select at least one image.");
-        return;
-    }
+    let files = fileInput.files;
+
     for (let file of files) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -33,17 +21,18 @@ uploadButton.addEventListener("click", async () => {
             const img = document.createElement("img");
             img.src = imageDataUrl;
             uploadedImages.appendChild(img);
-            uploadedImages.scrollTop = uploadedImages.scrollHeight;
+            uploadedImages.scrollTop = uploadedImages.scrollHeight; // Add this line
         };
+
         reader.onerror = (err) => {
             console.error("Error reading file:", err);
             alert("An error occurred while reading the file.");
         };
+
         reader.readAsDataURL(file);
     }
 });
 
-// Show/Hide button handler
 showHideButton.addEventListener("click", () => {
     if (uploadedImages.style.display === "none") {
         uploadedImages.style.display = "block";
@@ -54,7 +43,6 @@ showHideButton.addEventListener("click", () => {
     }
 });
 
-// Remove one button handler
 removeOneButton.addEventListener("click", () => {
     if (uploadedImages.children.length > 0) {
         uploadedImages.removeChild(uploadedImages.lastChild);
@@ -62,57 +50,45 @@ removeOneButton.addEventListener("click", () => {
     }
 });
 
-// Remove all button handler
 removeAllButton.addEventListener("click", () => {
     uploadedImages.innerHTML = "";
     uploadedImageUrls = [];
 });
 
-// Night mode toggle
+// script.js
+const nightModeToggle = document.getElementById("nightModeToggle");
+const nightModeIcon = document.getElementById("nightModeIcon");
+
+let isNightMode = false;
+
 nightModeToggle.addEventListener("click", () => {
     isNightMode = !isNightMode;
+    
     document.body.classList.toggle("night-mode", isNightMode);
-    nightModeIcon.classList.toggle("fa-moon", isNightMode);
-    nightModeIcon.classList.toggle("fa-sun", !isNightMode);
+    
+    // Change icon based on mode
+    if (isNightMode) {
+        nightModeIcon.classList.remove("fa-sun");
+        nightModeIcon.classList.add("fa-moon");
+    } else {
+        nightModeIcon.classList.remove("fa-moon");
+        nightModeIcon.classList.add("fa-sun");
+    }
 });
 
-// Find button handler for OCR
+const findButton = document.getElementById("findButton");
+
 findButton.addEventListener("click", async () => {
-    extractedText.value = ""; // Clear previous results
+  const imageDataUrls = uploadedImageUrls; // assuming this is the array of image URLs
+  const response = await fetch('/build/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrftoken,
+    },
+    body: JSON.stringify({ image_urls: imageDataUrls }),
+  });
 
-    if (uploadedImageUrls.length === 0) {
-        alert("No images uploaded!");
-        return; // Prevent fetch if no images
-    }
-
-    try {
-        const response = await fetch('/build/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken,
-            },
-            body: JSON.stringify({ image_urls: uploadedImageUrls }),
-        });
-
-        // Check if the response is okay (status code 2xx)
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-        }
-
-        // Try parsing JSON response
-        const result = await response.json();
-        if (result.text) {
-            result.text.forEach((text, index) => {
-                extractedText.value += `Image ${index + 1}:\n${text}\n\n`;
-            });
-        } else if (result.error) {
-            console.error("OCR processing error:", result.error);
-            alert("An error occurred while processing the images.");
-        }
-    } catch (error) {
-        console.error("Error in fetch:", error);
-        alert(`An error occurred: ${error.message}`);
-    }
+  const result = await response.json();
+  extractedText.value = result.text;
 });
-
