@@ -12,6 +12,9 @@ import os
 tesseract_path = os.environ.get('TESSERACT_PATH', '/usr/bin/tesseract')  # Replace with actual path
 pytesseract.pytesseract.tesseract_cmd = tesseract_path
 
+def homePage(request):
+    return render(request, "main.html")
+
 def OCR_model(inp_img):
     try:
         ocr_result = pytesseract.image_to_string(inp_img)
