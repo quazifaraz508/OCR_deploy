@@ -14,9 +14,6 @@ RUN apt-get update && apt-get install -y tesseract-ocr
 # Copy the current directory contents into the container at /ocr_model
 COPY . /ocr_model
 
-# Set environment variables (optional, example for Django)
-ENV DJANGO_SETTINGS_MODULE = ocr_model.settings.py 
-ENV PYTHONUNBUFFERED=1
 
 # Run the Django server with Gunicorn
 CMD ["gunicorn", "ocr_model.wsgi:application", "--bind", "0.0.0.0:8000"]
