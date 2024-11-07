@@ -12,6 +12,8 @@ const findButton = document.getElementById("findButton");
 
 // Getting CSRF token from the hidden input
 // const csrftoken = document.getElementById('csrf_token').value;
+const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
 
 let uploadedImageUrls = [];
 let isNightMode = false;
