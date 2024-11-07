@@ -95,9 +95,14 @@ findButton.addEventListener("click", async () => {
             body: JSON.stringify({ image_urls: uploadedImageUrls }),
         });
 
+        // Check if the response is okay (status code 2xx)
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
+        // Try parsing JSON response
         const result = await response.json();
         if (result.text) {
-            // Display each OCR result in the textarea
             result.text.forEach((text, index) => {
                 extractedText.value += `Image ${index + 1}:\n${text}\n\n`;
             });
@@ -107,6 +112,7 @@ findButton.addEventListener("click", async () => {
         }
     } catch (error) {
         console.error("Error in fetch:", error);
-        alert("An error occurred while fetching OCR results.");
+        alert(`An error occurred: ${error.message}`);
     }
 });
+
