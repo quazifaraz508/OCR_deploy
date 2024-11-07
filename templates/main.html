@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <!-- Hidden CSRF token -->
     <input type="hidden" id="csrf_token" value="{% csrf_token %}">
 
     <header>
@@ -46,14 +47,15 @@
                 <i class="fas fa-envelope"></i> quazifaraz508@gmail.com
             </a>
         </div><br>
-        <div class="contact-icon phone " style="text-decoration: none; color: #008d26;">
+        <div class="contact-icon phone" style="text-decoration: none; color: #008d26;">
             <i class="fas fa-phone"></i> (+91) 7558342940
         </div>
-        
     </footer>
-    
+
+    <!-- JavaScript to handle CSRF token and actions -->
     <script>
-        var csrftoken = "{% csrf_token %}";
+        // Access the CSRF token from the hidden input field
+        const csrftoken = document.getElementById('csrf_token').value;
     </script>
     <script src="{% static 'script.js' %}"></script>
 </body>
