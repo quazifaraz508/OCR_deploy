@@ -1,5 +1,4 @@
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 import pytesseract
 from PIL import Image
@@ -7,22 +6,20 @@ from io import BytesIO
 import base64
 import requests
 import json
+import os
 
 # Set Tesseract command path if not in PATH
-import os
 tesseract_path = os.environ.get('TESSERACT_PATH', '/usr/bin/tesseract')  # Replace with actual path
 pytesseract.pytesseract.tesseract_cmd = tesseract_path
-# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 
-def homePage(request):
-    return render(request, "main.html")
-
-# OCR function
 def OCR_model(inp_img):
-    ocr_result = pytesseract.image_to_string(inp_img)
-    return ocr_result
+    try:
+        ocr_result = pytesseract.image_to_string(inp_img)
+        return ocr_result
+    except Exception as e:
+        print(f"Error during OCR: {e}")
+        return None
 
-# OCR processing view for handling image URL requests
 @require_http_methods(['POST'])
 def OCR_build(request):
     try:
@@ -31,7 +28,6 @@ def OCR_build(request):
         image_urls = data.get('image_urls', [])
         ocr_results = []
 
-        # Process each image URL
         for url in image_urls:
             try:
                 # Handle base64 encoded images or URL-based images
@@ -47,9 +43,12 @@ def OCR_build(request):
                 
                 # Perform OCR
                 ocr_text = OCR_model(img)
-                ocr_results.append(ocr_text)
+                if ocr_text:
+                    ocr_results.append(ocr_text)
+                else:
+                    ocr_results.append(f"Failed to process image: {url}")
             except Exception as img_error:
-                # If there's an error with a specific image, log it and continue
+                # Log image-specific errors
                 print(f"Error processing image {url}: {img_error}")
                 ocr_results.append(f"Error processing image: {img_error}")
 
@@ -57,5 +56,6 @@ def OCR_build(request):
         return JsonResponse({'text': ocr_results})
 
     except Exception as e:
-        # Handle any unexpected errors
+        # Log unexpected errors and return proper response
+        print(f"Unexpected error: {e}")
         return JsonResponse({'error': f"An error occurred: {str(e)}"}, status=500)
