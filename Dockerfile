@@ -5,7 +5,7 @@ FROM python:3.8-slim
 RUN apt-get update && apt-get install -y tesseract-ocr
 
 # Set the working directory inside the container
-WORKDIR /app
+WORKDIR /ocr_model
 
 # Copy the requirements.txt file into the container
 COPY requirements.txt .
@@ -14,7 +14,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application files into the container
-COPY . .
+COPY /ocr_model
 
 # Expose the port your app will run on (adjust if your app uses a different port)
 EXPOSE 8000
