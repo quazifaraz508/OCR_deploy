@@ -20,4 +20,4 @@ COPY /ocr_model
 EXPOSE 8000
 
 # Command to run your app using app.py (if your app is a Flask or other Python app)
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py",  "ocr_model.wsgi:application","runserver", "0.0.0.0:8000"]
