@@ -7,8 +7,16 @@ const removeAllButton = document.getElementById("removeAllButton");
 const output = document.getElementById("output");
 const uploadedImages = document.getElementById("uploadedImages");
 const extractedText = document.getElementById("extractedText");
-
+const findButton = document.getElementById("findButton");
 let uploadedImageUrls = [];
+
+// Helper function to get CSRF token
+function getCsrfToken() {
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+}
 
 uploadButton.addEventListener("click", async () => {
     let files = fileInput.files;
@@ -21,7 +29,7 @@ uploadButton.addEventListener("click", async () => {
             const img = document.createElement("img");
             img.src = imageDataUrl;
             uploadedImages.appendChild(img);
-            uploadedImages.scrollTop = uploadedImages.scrollHeight; // Add this line
+            uploadedImages.scrollTop = uploadedImages.scrollHeight;
         };
 
         reader.onerror = (err) => {
@@ -55,7 +63,6 @@ removeAllButton.addEventListener("click", () => {
     uploadedImageUrls = [];
 });
 
-// script.js
 const nightModeToggle = document.getElementById("nightModeToggle");
 const nightModeIcon = document.getElementById("nightModeIcon");
 
@@ -63,10 +70,8 @@ let isNightMode = false;
 
 nightModeToggle.addEventListener("click", () => {
     isNightMode = !isNightMode;
-    
     document.body.classList.toggle("night-mode", isNightMode);
-    
-    // Change icon based on mode
+
     if (isNightMode) {
         nightModeIcon.classList.remove("fa-sun");
         nightModeIcon.classList.add("fa-moon");
@@ -76,19 +81,28 @@ nightModeToggle.addEventListener("click", () => {
     }
 });
 
-const findButton = document.getElementById("findButton");
-
 findButton.addEventListener("click", async () => {
-  const imageDataUrls = uploadedImageUrls; // assuming this is the array of image URLs
-  const response = await fetch('/build/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrftoken,
-    },
-    body: JSON.stringify({ image_urls: imageDataUrls }),
-  });
+    const csrfToken = getCsrfToken();
+    const imageDataUrls = uploadedImageUrls;
 
-  const result = await response.json();
-  extractedText.value = result.text;
+    try {
+        const response = await fetch('/build/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ image_urls: imageDataUrls }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
+        const result = await response.json();
+        extractedText.value = result.text;
+    } catch (error) {
+        console.error("Error during OCR processing:", error);
+        alert("An error occurred during OCR processing. Please try again later.");
+    }
 });
