@@ -12,6 +12,19 @@ import os
 # Set Tesseract command path if not in PATH
 tesseract_path = os.environ.get('TESSERACT_PATH', '/usr/bin/tesseract')  # Replace with actual path
 pytesseract.pytesseract.tesseract_cmd = tesseract_path
+import time
+import requests
+
+def fetch_image(url, retries=3):
+    for _ in range(retries):
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            return response
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching {url}: {e}. Retrying...")
+            time.sleep(2)  # Wait before retrying
+    return None  # Return None if all retries fail
 
 def homePage(request):
     return render(request, "main.html")
